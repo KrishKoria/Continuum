@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, Menu, MessageSquare, X } from "lucide-react";
 
 type NavLink = {
@@ -66,6 +66,9 @@ export default function LandingNav({
               size="icon"
               className="md:hidden"
               onClick={onToggle}
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {mobileMenuOpen ? (
                 <X className="size-5" />
@@ -77,36 +80,39 @@ export default function LandingNav({
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
-        >
-          <div className="px-6 py-4 space-y-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
-                onClick={onClose}
-              >
-                {link.label}
-              </a>
-            ))}
-            <div className="pt-4 border-t border-border/50 space-y-2">
-              <Button variant="outline" className="w-full">
-                Sign In
-              </Button>
-              <Button className="w-full">
-                Get Started
-                <ArrowRight className="size-3.5" />
-              </Button>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
+          >
+            <div className="px-6 py-4 space-y-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={onClose}
+                >
+                  {link.label}
+                </a>
+              ))}
+              <div className="pt-4 border-t border-border/50 space-y-2">
+                <Button variant="outline" className="w-full">
+                  Sign In
+                </Button>
+                <Button className="w-full">
+                  Get Started
+                  <ArrowRight className="size-3.5" />
+                </Button>
+              </div>
             </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
