@@ -1,6 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, Menu, MessageSquare, X } from "lucide-react";
+import {
+  LoginLink,
+  LogoutLink,
+  RegisterLink,
+  useKindeBrowserClient,
+} from "@kinde-oss/kinde-auth-nextjs";
 
 type NavLink = {
   label: string;
@@ -25,6 +31,8 @@ export default function LandingNav({
   onToggle,
   onClose,
 }: LandingNavProps) {
+  const { getUser, isLoading } = useKindeBrowserClient();
+  const user = getUser();
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -53,30 +61,82 @@ export default function LandingNav({
               </a>
             ))}
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-              Sign In
-            </Button>
-            <Button size="sm" className="hidden sm:inline-flex">
-              Get Started
-              <ArrowRight className="size-3.5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={onToggle}
-              aria-label="Toggle mobile menu"
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="size-5" />
-              ) : (
-                <Menu className="size-5" />
-              )}
-            </Button>
-          </div>
+          {isLoading ? null : (
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3">
+                {user ? (
+                  <>
+                    <AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-primary"
+                        >
+                          Go to Dashboard
+                        </Button>
+                      </motion.div>
+                    </AnimatePresence>
+                    <AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        <LogoutLink
+                          className={buttonVariants({
+                            variant: "default",
+                            size: "sm",
+                            className: "text-primary",
+                          })}
+                        >
+                          Logout
+                        </LogoutLink>
+                      </motion.div>
+                    </AnimatePresence>
+                  </>
+                ) : (
+                  <>
+                    <LoginLink
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "sm",
+                      })}
+                    >
+                      Sign In
+                    </LoginLink>
+                    <RegisterLink
+                      className={buttonVariants({
+                        size: "sm",
+                      })}
+                    >
+                      Get Started
+                      <ArrowRight className="size-3.5" />
+                    </RegisterLink>
+                  </>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={onToggle}
+                aria-label="Toggle mobile menu"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
+              >
+                {mobileMenuOpen ? (
+                  <X className="size-5" />
+                ) : (
+                  <Menu className="size-5" />
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -101,13 +161,62 @@ export default function LandingNav({
                 </a>
               ))}
               <div className="pt-4 border-t border-border/50 space-y-2">
-                <Button variant="outline" className="w-full">
-                  Sign In
-                </Button>
-                <Button className="w-full">
-                  Get Started
-                  <ArrowRight className="size-3.5" />
-                </Button>
+                {user ? (
+                  <>
+                    <AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        <Button
+                          variant="default"
+                          size="lg"
+                          className="w-full justify-center gap-2"
+                        >
+                          Go to Dashboard
+                          <ArrowRight className="size-4" />
+                        </Button>
+                      </motion.div>
+                    </AnimatePresence>
+                    <AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        <LogoutLink
+                          className={buttonVariants({
+                            variant: "outline",
+                            size: "lg",
+                            className: "w-full justify-center",
+                          })}
+                        >
+                          Logout
+                        </LogoutLink>
+                      </motion.div>
+                    </AnimatePresence>
+                  </>
+                ) : (
+                  <>
+                    <LoginLink
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "sm",
+                      })}
+                    >
+                      Sign In
+                    </LoginLink>
+                    <RegisterLink
+                      className={buttonVariants({
+                        size: "sm",
+                      })}
+                    >
+                      Get Started
+                      <ArrowRight className="size-3.5" />
+                    </RegisterLink>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
